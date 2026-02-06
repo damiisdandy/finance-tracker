@@ -21,6 +21,7 @@ const CATEGORY_LABELS: Record<string, string> = {
 export function ExpensePieChart() {
   const { convert, format, currency } = useCurrency();
   const { data: expenseData } = trpc.expense.list.useQuery();
+  const { data: subscriptionData } = trpc.subscription.list.useQuery();
 
   const chartData =
     expenseData?.reduce((acc, item) => {
@@ -34,6 +35,15 @@ export function ExpensePieChart() {
       }
       return acc;
     }, [] as { name: string; value: number }[]) ?? [];
+
+  if (subscriptionData && subscriptionData.length > 0) {
+    const subscriptionTotal = subscriptionData.reduce((acc, item) => {
+      const amount = convert(parseFloat(item.amount), item.currency);
+      return acc + amount;
+    }, 0);
+
+    chartData.push({ name: "Subscriptions", value: subscriptionTotal });
+  }
   const total = chartData.reduce((sum, item) => sum + item.value, 0);
 
   if (chartData.length === 0) {
