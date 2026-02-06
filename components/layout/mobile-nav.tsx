@@ -90,7 +90,7 @@ export function MobileNav({ open, onOpenChange }: MobileNavProps) {
                 <p className="text-xs text-muted-foreground">{session.user.email}</p>
               </div>
               <Button
-                variant="ghost"
+                variant="destructive"
                 className="w-full justify-start"
                 onClick={() => authClient.signOut({})}
               >

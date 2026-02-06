@@ -14,6 +14,7 @@ import {
   verifications,
 } from "./schema";
 import { auth } from "@/lib/auth";
+import { dbClient } from "@/lib/db";
 
 config({ path: ".env.local" });
 
@@ -280,6 +281,7 @@ async function seed() {
   console.log("Seeding complete!");
 
   await client.end();
+  await dbClient.end();
 }
 
 seed().catch((err) => {
