@@ -1,36 +1,85 @@
-This is a [Next.js](https://nextjs.org) project bootstrapped with [`create-next-app`](https://nextjs.org/docs/app/api-reference/cli/create-next-app).
+# Finance Tracker
 
-## Getting Started
+A personal finance dashboard for tracking income, expenses, subscriptions, savings, and cash flow with per-user accounts.
 
-First, run the development server:
+## Features
+
+- Email/password authentication (Better Auth)
+- Per-user data isolation for all records
+- Dashboard with net worth, cash flow, and category breakdowns
+- Savings accounts and savings allocations (treated as transfers, not expenses)
+- Multi-currency support with conversion
+- Subscriptions tracking and reminders
+
+## Tech Stack
+
+- Next.js App Router
+- tRPC + TanStack Query
+- Drizzle ORM + Postgres
+- Better Auth
+- Recharts
+
+## Local Setup
+
+### 1) Install dependencies
 
 ```bash
-npm run dev
-# or
-yarn dev
-# or
-pnpm dev
-# or
-bun dev
+pnpm install
 ```
 
-Open [http://localhost:3000](http://localhost:3000) with your browser to see the result.
+### 2) Environment variables
 
-You can start editing the page by modifying `app/page.tsx`. The page auto-updates as you edit the file.
+Create `.env.local`:
 
-This project uses [`next/font`](https://nextjs.org/docs/app/building-your-application/optimizing/fonts) to automatically optimize and load [Geist](https://vercel.com/font), a new font family for Vercel.
+```env
+DATABASE_URL=postgres://user:pass@localhost:5432/finance_tracker
+BETTER_AUTH_SECRET=replace_with_32+_chars_secret
+BETTER_AUTH_URL=http://localhost:3000
+NEXT_PUBLIC_APP_URL=http://localhost:3000
+RESEND_API_KEY=replace_or_dummy_if_not_sending_emails
+```
 
-## Learn More
+### 3) Database migrations
 
-To learn more about Next.js, take a look at the following resources:
+Generate and apply migrations for the app tables and Better Auth tables:
 
-- [Next.js Documentation](https://nextjs.org/docs) - learn about Next.js features and API.
-- [Learn Next.js](https://nextjs.org/learn) - an interactive Next.js tutorial.
+```bash
+npx drizzle-kit generate
+npx drizzle-kit migrate
+```
 
-You can check out [the Next.js GitHub repository](https://github.com/vercel/next.js) - your feedback and contributions are welcome!
+### 4) Seed data
 
-## Deploy on Vercel
+```bash
+pnpm db:seed
+```
 
-The easiest way to deploy your Next.js app is to use the [Vercel Platform](https://vercel.com/new?utm_medium=default-template&filter=next.js&utm_source=create-next-app&utm_campaign=create-next-app-readme) from the creators of Next.js.
+Seeded demo credentials:
 
-Check out our [Next.js deployment documentation](https://nextjs.org/docs/app/building-your-application/deploying) for more details.
+- Email: `damilola.jerugba@gmail.com`
+- Password: `password123`
+
+### 5) Run the app
+
+```bash
+pnpm dev
+```
+
+Open `http://localhost:3000`.
+
+## Scripts
+
+- `pnpm dev` - Start the dev server
+- `pnpm build` - Build for production
+- `pnpm start` - Start the production server
+- `pnpm lint` - Run ESLint
+- `pnpm db:migrate` - Run Drizzle migrations
+- `pnpm db:push` - Push schema to the database
+- `pnpm db:seed` - Seed the database
+- `pnpm db:studio` - Open Drizzle Studio
+
+## Notes
+
+- Authentication routes live at `/api/auth/*`.
+- All data is scoped by the authenticated user and enforced in tRPC routers.
+- Savings allocations are excluded from expense charts and included as a positive allocation in cash flow.
