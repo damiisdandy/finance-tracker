@@ -3,12 +3,18 @@
 import { Card, CardContent, CardHeader, CardTitle } from "@/components/ui/card";
 import { trpc } from "@/lib/trpc/client";
 import { useCurrency } from "@/providers/currency-provider";
+import { type Frequency, toMonthlyAmount } from "@/lib/utils/finance";
 import { TrendingUp } from "lucide-react";
 
 export function NetWorthCard() {
   const { convert, format } = useCurrency();
 
-  const { data: savingsData, isLoading } = trpc.savings.list.useQuery();
+  const { data: savingsData, isLoading: savingsLoading } = trpc.savings.list.useQuery();
+  const { data: incomeData, isLoading: incomeLoading } = trpc.income.list.useQuery();
+  const { data: expenseData, isLoading: expenseLoading } = trpc.expense.list.useQuery();
+  const { data: subscriptionData, isLoading: subscriptionLoading } = trpc.subscription.list.useQuery();
+
+  const isLoading = savingsLoading || incomeLoading || expenseLoading || subscriptionLoading;
 
   const totalAssets =
     savingsData?.reduce((acc, item) => {
@@ -16,9 +22,31 @@ export function NetWorthCard() {
       return acc + convert(balance, item.currency);
     }, 0) ?? 0;
 
-  // For now, net worth = total assets (savings)
-  // Can be extended to include bank accounts - debts
-  const netWorth = totalAssets;
+  const monthlyIncome =
+    incomeData?.reduce((acc, item) => {
+      const amount = parseFloat(item.amount);
+      const converted = convert(amount, item.currency);
+      return acc + toMonthlyAmount(converted, item.frequency as Frequency, {
+        isWorkHours: item.isWorkHours,
+      });
+    }, 0) ?? 0;
+
+  const monthlyExpenses =
+    expenseData?.reduce((acc, item) => {
+      const amount = parseFloat(item.amount);
+      const converted = convert(amount, item.currency);
+      return acc + toMonthlyAmount(converted, item.frequency as Frequency);
+    }, 0) ?? 0;
+
+  const monthlySubscriptions =
+    subscriptionData?.reduce((acc, item) => {
+      const amount = parseFloat(item.amount);
+      const converted = convert(amount, item.currency);
+      return acc + toMonthlyAmount(converted, item.frequency as Frequency);
+    }, 0) ?? 0;
+
+  const netCashFlow = monthlyIncome - monthlyExpenses - monthlySubscriptions;
+  const netWorth = totalAssets + netCashFlow;
 
   if (isLoading) {
     return (
@@ -48,9 +76,12 @@ export function NetWorthCard() {
         <div className="text-3xl font-bold text-emerald-100">
           {format(netWorth)}
         </div>
-        <p className="mt-1 text-xs text-emerald-300">
-          Total assets across {savingsData?.length ?? 0} accounts
-        </p>
+        <div className="mt-2 space-y-1 text-xs text-emerald-300">
+          <p>Savings: {format(totalAssets)}</p>
+          <p>
+            Net Cash Flow: {netCashFlow >= 0 ? "+" : "-"}{format(Math.abs(netCashFlow))}/mo
+          </p>
+        </div>
       </CardContent>
     </Card>
   );

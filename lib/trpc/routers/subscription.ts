@@ -8,7 +8,7 @@ const subscriptionInput = z.object({
   amount: z.string(),
   frequency: z.enum(["daily", "weekly", "monthly", "quarterly", "yearly", "one-time"]),
   currency: z.enum(["NGN", "USD"]),
-  nextPaymentDate: z.string(),
+  nextPaymentDate: z.string().optional(),
 });
 
 export const subscriptionRouter = router({
@@ -32,7 +32,11 @@ export const subscriptionRouter = router({
   create: protectedProcedure.input(subscriptionInput).mutation(async ({ ctx, input }) => {
     const result = await db
       .insert(subscriptions)
-      .values({ ...input, userId: ctx.session.user.id })
+      .values({
+        ...input,
+        nextPaymentDate: input.nextPaymentDate || null,
+        userId: ctx.session.user.id,
+      })
       .returning();
     return result[0];
   }),
@@ -43,7 +47,11 @@ export const subscriptionRouter = router({
       const { id, ...data } = input;
       const result = await db
         .update(subscriptions)
-        .set({ ...data, updatedAt: new Date() })
+        .set({
+          ...data,
+          nextPaymentDate: data.nextPaymentDate || null,
+          updatedAt: new Date(),
+        })
         .where(and(eq(subscriptions.id, id), eq(subscriptions.userId, ctx.session.user.id)))
         .returning();
       return result[0];

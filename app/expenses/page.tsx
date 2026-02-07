@@ -43,8 +43,8 @@ export default function ExpensesPage() {
     amount: string;
     frequency: "daily" | "weekly" | "monthly" | "quarterly" | "yearly" | "one-time";
     currency: "NGN" | "USD";
-    category: "groceries" | "transport" | "utilities" | "entertainment" | "healthcare" | "education" | "shopping" | "other";
-    date: string;
+    category: "groceries" | "transport" | "utilities" | "entertainment" | "healthcare" | "education" | "shopping" | "rent" | "food-and-dining" | "insurance" | "personal-care" | "other";
+    date?: string;
   }) => {
     if (editingExpense) {
       updateMutation.mutate({ ...data, id: editingExpense.id });

@@ -44,7 +44,7 @@ export default function SubscriptionsPage() {
     amount: string;
     frequency: "daily" | "weekly" | "monthly" | "quarterly" | "yearly" | "one-time";
     currency: "NGN" | "USD";
-    nextPaymentDate: string;
+    nextPaymentDate?: string;
   }) => {
     if (editingSubscription) {
       updateMutation.mutate({ ...data, id: editingSubscription.id });

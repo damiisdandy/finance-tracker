@@ -29,7 +29,7 @@ const formSchema = z.object({
   amount: z.string().min(1, "Amount is required"),
   frequency: z.enum(["daily", "weekly", "monthly", "quarterly", "yearly", "one-time"]),
   currency: z.enum(["NGN", "USD"]),
-  nextPaymentDate: z.string().min(1, "Next payment date is required"),
+  nextPaymentDate: z.string().optional().default(""),
 });
 
 type FormValues = z.input<typeof formSchema>;
@@ -60,7 +60,7 @@ export function SubscriptionForm({
       currency: subscription?.currency ?? "NGN",
       nextPaymentDate: subscription?.nextPaymentDate
         ? formatDateInput(subscription.nextPaymentDate)
-        : formatDateInput(new Date()),
+        : "",
     },
   });
 

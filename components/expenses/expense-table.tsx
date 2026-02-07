@@ -43,6 +43,10 @@ const CATEGORY_LABELS: Record<string, string> = {
   healthcare: "Healthcare",
   education: "Education",
   shopping: "Shopping",
+  rent: "Rent",
+  "food-and-dining": "Food & Dining",
+  insurance: "Insurance",
+  "personal-care": "Personal Care",
   other: "Other",
 };
 
@@ -86,7 +90,9 @@ export function ExpenseTable({ expenses, onEdit, onDelete }: ExpenseTableProps) 
               </TableCell>
               <TableCell>{CATEGORY_LABELS[expense.category]}</TableCell>
               <TableCell>{FREQUENCY_LABELS[expense.frequency]}</TableCell>
-              <TableCell>{formatDate(expense.date)}</TableCell>
+              <TableCell>
+                {expense.date ? formatDate(expense.date) : <span className="text-muted-foreground">-</span>}
+              </TableCell>
               <TableCell>
                 <DropdownMenu>
                   <DropdownMenuTrigger asChild>

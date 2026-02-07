@@ -18,7 +18,7 @@ interface SubscriptionModalProps {
     amount: string;
     frequency: "daily" | "weekly" | "monthly" | "quarterly" | "yearly" | "one-time";
     currency: "NGN" | "USD";
-    nextPaymentDate: string;
+    nextPaymentDate?: string;
   }) => void;
   isSubmitting?: boolean;
 }

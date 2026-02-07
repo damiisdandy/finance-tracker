@@ -67,7 +67,7 @@ export function SubscriptionTable({
         {subscriptions.map((subscription) => {
           const amount = parseFloat(subscription.amount);
           const convertedAmount = convert(amount, subscription.currency);
-          const upcoming = isUpcoming(subscription.nextPaymentDate);
+          const upcoming = subscription.nextPaymentDate ? isUpcoming(subscription.nextPaymentDate) : false;
 
           return (
             <TableRow key={subscription.id}>
@@ -80,13 +80,17 @@ export function SubscriptionTable({
               </TableCell>
               <TableCell>{FREQUENCY_LABELS[subscription.frequency]}</TableCell>
               <TableCell>
-                <span
-                  className={cn(
-                    upcoming && "font-medium text-yellow-500"
-                  )}
-                >
-                  {formatDate(subscription.nextPaymentDate)}
-                </span>
+                {subscription.nextPaymentDate ? (
+                  <span
+                    className={cn(
+                      upcoming && "font-medium text-yellow-500"
+                    )}
+                  >
+                    {formatDate(subscription.nextPaymentDate)}
+                  </span>
+                ) : (
+                  <span className="text-muted-foreground">-</span>
+                )}
               </TableCell>
               <TableCell>
                 <DropdownMenu>

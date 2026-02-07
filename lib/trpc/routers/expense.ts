@@ -16,9 +16,13 @@ const expenseInput = z.object({
     "healthcare",
     "education",
     "shopping",
+    "rent",
+    "food-and-dining",
+    "insurance",
+    "personal-care",
     "other",
   ]),
-  date: z.string(),
+  date: z.string().optional(),
 });
 
 export const expenseRouter = router({
@@ -37,7 +41,11 @@ export const expenseRouter = router({
   create: protectedProcedure.input(expenseInput).mutation(async ({ ctx, input }) => {
     const result = await db
       .insert(expenses)
-      .values({ ...input, userId: ctx.session.user.id })
+      .values({
+        ...input,
+        date: input.date || null,
+        userId: ctx.session.user.id,
+      })
       .returning();
     return result[0];
   }),
@@ -48,7 +56,11 @@ export const expenseRouter = router({
       const { id, ...data } = input;
       const result = await db
         .update(expenses)
-        .set({ ...data, updatedAt: new Date() })
+        .set({
+          ...data,
+          date: data.date || null,
+          updatedAt: new Date(),
+        })
         .where(and(eq(expenses.id, id), eq(expenses.userId, ctx.session.user.id)))
         .returning();
       return result[0];

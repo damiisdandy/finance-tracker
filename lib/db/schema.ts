@@ -36,6 +36,10 @@ export const expenseCategoryEnum = pgEnum("expense_category", [
   "healthcare",
   "education",
   "shopping",
+  "rent",
+  "food-and-dining",
+  "insurance",
+  "personal-care",
   "other",
 ]);
 
@@ -98,7 +102,7 @@ export const subscriptions = pgTable("subscriptions", {
   amount: decimal("amount", { precision: 12, scale: 2 }).notNull(),
   frequency: frequencyEnum("frequency").notNull(),
   currency: currencyEnum("currency").notNull().default("NGN"),
-  nextPaymentDate: date("next_payment_date").notNull(),
+  nextPaymentDate: date("next_payment_date"),
   createdAt: timestamp("created_at").defaultNow().notNull(),
   updatedAt: timestamp("updated_at").defaultNow().notNull(),
 });
@@ -113,7 +117,7 @@ export const expenses = pgTable("expenses", {
   frequency: frequencyEnum("frequency").notNull(),
   currency: currencyEnum("currency").notNull().default("NGN"),
   category: expenseCategoryEnum("category").notNull(),
-  date: date("date").notNull(),
+  date: date("date"),
   createdAt: timestamp("created_at").defaultNow().notNull(),
   updatedAt: timestamp("updated_at").defaultNow().notNull(),
 });

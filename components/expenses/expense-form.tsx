@@ -37,9 +37,13 @@ const formSchema = z.object({
     "healthcare",
     "education",
     "shopping",
+    "rent",
+    "food-and-dining",
+    "insurance",
+    "personal-care",
     "other",
   ]),
-  date: z.string().min(1, "Date is required"),
+  date: z.string().optional().default(""),
 });
 
 type FormValues = z.input<typeof formSchema>;
@@ -71,7 +75,7 @@ export function ExpenseForm({
       category: expense?.category ?? "other",
       date: expense?.date
         ? formatDateInput(expense.date)
-        : formatDateInput(new Date()),
+        : "",
     },
   });
 
@@ -150,6 +154,10 @@ export function ExpenseForm({
                   <SelectItem value="healthcare">Healthcare</SelectItem>
                   <SelectItem value="education">Education</SelectItem>
                   <SelectItem value="shopping">Shopping</SelectItem>
+                  <SelectItem value="rent">Rent</SelectItem>
+                  <SelectItem value="food-and-dining">Food & Dining</SelectItem>
+                  <SelectItem value="insurance">Insurance</SelectItem>
+                  <SelectItem value="personal-care">Personal Care</SelectItem>
                   <SelectItem value="other">Other</SelectItem>
                 </SelectContent>
               </Select>

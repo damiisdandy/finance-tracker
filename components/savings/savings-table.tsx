@@ -20,6 +20,7 @@ import Link from "next/link";
 import type { SavingsAccount } from "@/lib/db/schema";
 import { useCurrency } from "@/providers/currency-provider";
 import { formatDate } from "@/lib/utils/date";
+import { calculateCompoundInterest } from "@/lib/utils/calculator";
 
 interface SavingsTableProps {
   accounts: SavingsAccount[];
@@ -53,6 +54,7 @@ export function SavingsTable({
             <TableHead>Interest Rate</TableHead>
             <TableHead>Currency</TableHead>
             <TableHead>Last Updated</TableHead>
+            <TableHead className="bg-emerald-500/10 text-emerald-600 dark:text-emerald-400">10yr Forecast</TableHead>
             <TableHead className="w-12.5"></TableHead>
           </TableRow>
         </TableHeader>
@@ -68,6 +70,13 @@ export function SavingsTable({
               account.currency,
             );
             const interestRate = parseFloat(account.interestRate ?? "0");
+            const forecast = calculateCompoundInterest(
+              balance,
+              monthlyContribution,
+              interestRate,
+              10,
+            );
+            const convertedForecast = convert(forecast.futureValue, account.currency);
 
             return (
               <TableRow key={account.id}>
@@ -88,6 +97,9 @@ export function SavingsTable({
                 </TableCell>
                 <TableCell>{account.currency}</TableCell>
                 <TableCell>{formatDate(account.lastUpdated)}</TableCell>
+                <TableCell className="bg-emerald-500/5 font-medium text-emerald-600 dark:text-emerald-400">
+                  {format(convertedForecast)}
+                </TableCell>
                 <TableCell>
                   <DropdownMenu>
                     <DropdownMenuTrigger asChild>

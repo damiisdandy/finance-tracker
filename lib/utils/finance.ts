@@ -21,7 +21,7 @@ export function toMonthlyAmount(
     case "daily":
       return amount * 30; // Approximate days per month
     case "weekly":
-      return amount * 4.33; // Approximate weeks per month
+      return amount * 4;
     case "monthly":
       return amount;
     case "quarterly":
