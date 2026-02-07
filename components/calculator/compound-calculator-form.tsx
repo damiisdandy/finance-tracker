@@ -84,7 +84,7 @@ export function CompoundCalculatorForm({
                 <NumberInput step="0.01" placeholder="100000" {...field} />
               </FormControl>
               <FormDescription>
-                The initial amount you're starting with
+                The initial amount you&apos;re starting with
               </FormDescription>
               <FormMessage />
             </FormItem>
@@ -101,7 +101,7 @@ export function CompoundCalculatorForm({
                 <NumberInput step="0.01" placeholder="10000" {...field} />
               </FormControl>
               <FormDescription>
-                Amount you'll add each month
+                Amount you&apos;ll add each month
               </FormDescription>
               <FormMessage />
             </FormItem>

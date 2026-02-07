@@ -26,16 +26,17 @@ import type { SavingsAccount } from "@/lib/db/schema";
 const formSchema = z.object({
   name: z.string().min(1, "Name is required"),
   balance: z.string().min(1, "Balance is required"),
-  monthlyContribution: z.string().default("0"),
-  interestRate: z.string().default("0"),
+  monthlyContribution: z.string().min(1, "Monthly contribution is required"),
+  interestRate: z.string().min(1, "Interest rate is required"),
   currency: z.enum(["NGN", "USD"]),
 });
 
-type FormValues = z.infer<typeof formSchema>;
+type FormValues = z.input<typeof formSchema>;
+type FormSubmitValues = z.output<typeof formSchema>;
 
 interface SavingsFormProps {
   savings?: SavingsAccount | null;
-  onSubmit: (data: FormValues) => void;
+  onSubmit: (data: FormSubmitValues) => void;
   onCancel: () => void;
   isSubmitting?: boolean;
 }
@@ -46,7 +47,7 @@ export function SavingsForm({
   onCancel,
   isSubmitting,
 }: SavingsFormProps) {
-  const form = useForm<FormValues>({
+  const form = useForm<FormValues, undefined, FormSubmitValues>({
     resolver: zodResolver(formSchema),
     defaultValues: {
       name: savings?.name ?? "",

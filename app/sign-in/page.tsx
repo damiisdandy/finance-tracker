@@ -37,7 +37,7 @@ export default function SignInPage() {
     setIsSubmitting(false);
 
     if (signInError) {
-      setError(signInError.message);
+      setError(signInError.message ?? "Unable to sign in. Please try again.");
       return;
     }
 

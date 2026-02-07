@@ -3,9 +3,8 @@
 import {
   createContext,
   useContext,
-  useState,
   useCallback,
-  useEffect,
+  useState,
 } from "react";
 import { trpc } from "@/lib/trpc/client";
 
@@ -24,18 +23,12 @@ const CurrencyContext = createContext<CurrencyContextType | null>(null);
 
 export function CurrencyProvider({ children }: { children: React.ReactNode }) {
   const [currency, setCurrency] = useState<Currency>("NGN");
-  const [exchangeRate, setExchangeRate] = useState<number | null>(null);
 
   const { data, isLoading } = trpc.currency.getExchangeRate.useQuery(
     { from: "USD", to: "NGN" },
     { staleTime: 60 * 60 * 1000 }, // 1 hour
   );
-
-  useEffect(() => {
-    if (data?.rate) {
-      setExchangeRate(data.rate);
-    }
-  }, [data]);
+  const exchangeRate = data?.rate ?? null;
 
   const convert = useCallback(
     (amount: number, from: Currency): number => {

@@ -42,11 +42,12 @@ const formSchema = z.object({
   date: z.string().min(1, "Date is required"),
 });
 
-type FormValues = z.infer<typeof formSchema>;
+type FormValues = z.input<typeof formSchema>;
+type FormSubmitValues = z.output<typeof formSchema>;
 
 interface ExpenseFormProps {
   expense?: Expense | null;
-  onSubmit: (data: FormValues) => void;
+  onSubmit: (data: FormSubmitValues) => void;
   onCancel: () => void;
   isSubmitting?: boolean;
 }
@@ -57,12 +58,15 @@ export function ExpenseForm({
   onCancel,
   isSubmitting,
 }: ExpenseFormProps) {
-  const form = useForm<FormValues>({
+  const form = useForm<FormValues, undefined, FormSubmitValues>({
     resolver: zodResolver(formSchema),
     defaultValues: {
       name: expense?.name ?? "",
       amount: expense?.amount ?? "",
-      frequency: expense?.frequency ?? "one-time",
+      frequency:
+        expense?.frequency === "hourly"
+          ? "daily"
+          : (expense?.frequency ?? "one-time"),
       currency: expense?.currency ?? "NGN",
       category: expense?.category ?? "other",
       date: expense?.date

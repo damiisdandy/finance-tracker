@@ -39,7 +39,7 @@ export default function SignUpPage() {
     setIsSubmitting(false);
 
     if (signUpError) {
-      setError(signUpError.message);
+      setError(signUpError.message ?? "Unable to create account. Please try again.");
       return;
     }
 

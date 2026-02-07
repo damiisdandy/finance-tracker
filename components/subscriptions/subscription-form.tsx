@@ -32,11 +32,12 @@ const formSchema = z.object({
   nextPaymentDate: z.string().min(1, "Next payment date is required"),
 });
 
-type FormValues = z.infer<typeof formSchema>;
+type FormValues = z.input<typeof formSchema>;
+type FormSubmitValues = z.output<typeof formSchema>;
 
 interface SubscriptionFormProps {
   subscription?: Subscription | null;
-  onSubmit: (data: FormValues) => void;
+  onSubmit: (data: FormSubmitValues) => void;
   onCancel: () => void;
   isSubmitting?: boolean;
 }
@@ -47,12 +48,15 @@ export function SubscriptionForm({
   onCancel,
   isSubmitting,
 }: SubscriptionFormProps) {
-  const form = useForm<FormValues>({
+  const form = useForm<FormValues, undefined, FormSubmitValues>({
     resolver: zodResolver(formSchema),
     defaultValues: {
       name: subscription?.name ?? "",
       amount: subscription?.amount ?? "",
-      frequency: subscription?.frequency ?? "monthly",
+      frequency:
+        subscription?.frequency === "hourly"
+          ? "daily"
+          : (subscription?.frequency ?? "monthly"),
       currency: subscription?.currency ?? "NGN",
       nextPaymentDate: subscription?.nextPaymentDate
         ? formatDateInput(subscription.nextPaymentDate)
