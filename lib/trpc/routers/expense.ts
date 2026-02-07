@@ -22,7 +22,7 @@ const expenseInput = z.object({
     "personal-care",
     "other",
   ]),
-  date: z.string().optional(),
+  date: z.string().optional().transform((val) => val && val.length > 0 ? val : undefined),
 });
 
 export const expenseRouter = router({
