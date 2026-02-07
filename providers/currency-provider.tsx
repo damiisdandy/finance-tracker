@@ -28,7 +28,7 @@ export function CurrencyProvider({ children }: { children: React.ReactNode }) {
 
   const { data, isLoading } = trpc.currency.getExchangeRate.useQuery(
     { from: "USD", to: "NGN" },
-    { staleTime: 60 * 60 * 1000 } // 1 hour
+    { staleTime: 60 * 60 * 1000 }, // 1 hour
   );
 
   useEffect(() => {
@@ -51,7 +51,7 @@ export function CurrencyProvider({ children }: { children: React.ReactNode }) {
 
       return amount;
     },
-    [currency, exchangeRate]
+    [currency, exchangeRate],
   );
 
   const format = useCallback(
@@ -64,11 +64,11 @@ export function CurrencyProvider({ children }: { children: React.ReactNode }) {
           currency: displayCurrency,
           minimumFractionDigits: 2,
           maximumFractionDigits: 2,
-        }
+        },
       );
       return formatter.format(amount);
     },
-    [currency]
+    [currency],
   );
 
   return (
