@@ -1,7 +1,7 @@
 import { z } from "zod";
 import { router, protectedProcedure } from "../trpc";
 import { db, expenses } from "@/lib/db";
-import { and, eq } from "drizzle-orm";
+import { and, eq, sql } from "drizzle-orm";
 
 const expenseInput = z.object({
   name: z.string().min(1),
@@ -22,8 +22,12 @@ const expenseInput = z.object({
     "personal-care",
     "other",
   ]),
-  date: z.string().optional().transform((val) => val && val.length > 0 ? val : undefined),
+  date: z.string().optional(),
 });
+
+function toDateOrNull(val: string | undefined) {
+  return val && val.length > 0 ? val : sql`null`;
+}
 
 export const expenseRouter = router({
   list: protectedProcedure.query(async ({ ctx }) => {
@@ -44,7 +48,7 @@ export const expenseRouter = router({
       .insert(expenses)
       .values({
         ...rest,
-        date: date && date.length > 0 ? date : null,
+        date: toDateOrNull(date),
         userId: ctx.session.user.id,
       })
       .returning();
@@ -59,7 +63,7 @@ export const expenseRouter = router({
         .update(expenses)
         .set({
           ...data,
-          date: date && date.length > 0 ? date : null,
+          date: toDateOrNull(date),
           updatedAt: new Date(),
         })
         .where(and(eq(expenses.id, id), eq(expenses.userId, ctx.session.user.id)))

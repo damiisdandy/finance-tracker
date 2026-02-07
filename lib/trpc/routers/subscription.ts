@@ -1,15 +1,19 @@
 import { z } from "zod";
 import { router, protectedProcedure } from "../trpc";
 import { db, subscriptions } from "@/lib/db";
-import { and, eq } from "drizzle-orm";
+import { and, eq, sql } from "drizzle-orm";
 
 const subscriptionInput = z.object({
   name: z.string().min(1),
   amount: z.string(),
   frequency: z.enum(["daily", "weekly", "monthly", "quarterly", "yearly", "one-time"]),
   currency: z.enum(["NGN", "USD"]),
-  nextPaymentDate: z.string().optional().transform((val) => val && val.length > 0 ? val : undefined),
+  nextPaymentDate: z.string().optional(),
 });
+
+function toDateOrNull(val: string | undefined) {
+  return val && val.length > 0 ? val : sql`null`;
+}
 
 export const subscriptionRouter = router({
   list: protectedProcedure.query(async ({ ctx }) => {
@@ -35,7 +39,7 @@ export const subscriptionRouter = router({
       .insert(subscriptions)
       .values({
         ...rest,
-        nextPaymentDate: nextPaymentDate && nextPaymentDate.length > 0 ? nextPaymentDate : null,
+        nextPaymentDate: toDateOrNull(nextPaymentDate),
         userId: ctx.session.user.id,
       })
       .returning();
@@ -50,7 +54,7 @@ export const subscriptionRouter = router({
         .update(subscriptions)
         .set({
           ...data,
-          nextPaymentDate: nextPaymentDate && nextPaymentDate.length > 0 ? nextPaymentDate : null,
+          nextPaymentDate: toDateOrNull(nextPaymentDate),
           updatedAt: new Date(),
         })
         .where(and(eq(subscriptions.id, id), eq(subscriptions.userId, ctx.session.user.id)))
