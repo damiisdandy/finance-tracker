@@ -8,6 +8,7 @@ import { Plus } from "lucide-react";
 import { trpc } from "@/lib/trpc/client";
 import { SavingsTable } from "@/components/savings/savings-table";
 import { SavingsModal } from "@/components/savings/savings-modal";
+import { SavingsKPIs } from "@/components/savings/savings-kpis";
 import type { SavingsAccount } from "@/lib/db/schema";
 
 export default function SavingsPage() {
@@ -73,9 +74,12 @@ export default function SavingsPage() {
   };
 
   return (
-    <div className="flex min-w-0 flex-col overflow-hidden">
+    <div className="flex min-w-0 flex-col overflow-auto">
       <Header title="Savings" />
-      <div className="min-w-0 flex-1 overflow-hidden p-4 sm:p-6">
+      <div className="min-w-0 flex-1 space-y-4 p-4 sm:space-y-6 sm:p-6">
+        {!isLoading && (accounts ?? []).length > 0 && (
+          <SavingsKPIs accounts={accounts ?? []} />
+        )}
         <Card className="overflow-hidden">
           <CardHeader className="flex flex-col gap-4 sm:flex-row sm:items-center sm:justify-between">
             <CardTitle>Savings Accounts</CardTitle>
