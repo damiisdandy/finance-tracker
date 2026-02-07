@@ -45,7 +45,14 @@ export function NetWorthCard() {
       return acc + toMonthlyAmount(converted, item.frequency as Frequency);
     }, 0) ?? 0;
 
-  const netCashFlow = monthlyIncome - monthlyExpenses - monthlySubscriptions;
+  const monthlySavingsContributions =
+    savingsData?.reduce((acc, account) => {
+      const contribution = parseFloat(account.monthlyContribution ?? "0");
+      if (contribution <= 0) return acc;
+      return acc + convert(contribution, account.currency);
+    }, 0) ?? 0;
+
+  const netCashFlow = monthlyIncome - monthlyExpenses - monthlySubscriptions - monthlySavingsContributions;
   const netWorth = totalAssets + netCashFlow;
 
   if (isLoading) {
