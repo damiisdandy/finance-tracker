@@ -54,7 +54,7 @@ export function SavingsTable({
             <TableHead>Interest Rate</TableHead>
             <TableHead>Currency</TableHead>
             <TableHead>Last Updated</TableHead>
-            <TableHead className="bg-emerald-500/10 text-emerald-600 dark:text-emerald-400">10yr Forecast</TableHead>
+            <TableHead className="bg-emerald-500/10 text-emerald-600 dark:text-emerald-400">5yr Forecast</TableHead>
             <TableHead className="w-12.5"></TableHead>
           </TableRow>
         </TableHeader>
@@ -74,9 +74,8 @@ export function SavingsTable({
               balance,
               monthlyContribution,
               interestRate,
-              10,
+              5,
             );
-            const convertedForecast = convert(forecast.futureValue, account.currency);
 
             return (
               <TableRow key={account.id}>
@@ -98,7 +97,7 @@ export function SavingsTable({
                 <TableCell>{account.currency}</TableCell>
                 <TableCell>{formatDate(account.lastUpdated)}</TableCell>
                 <TableCell className="bg-emerald-500/5 font-medium text-emerald-600 dark:text-emerald-400">
-                  {format(convertedForecast)}
+                  {format(convert(forecast.futureValue, account.currency))}
                 </TableCell>
                 <TableCell>
                   <DropdownMenu>
