@@ -8,6 +8,7 @@ import { Plus } from "lucide-react";
 import { trpc } from "@/lib/trpc/client";
 import { ExpenseTable } from "@/components/expenses/expense-table";
 import { ExpenseModal } from "@/components/expenses/expense-modal";
+import { ExpenseKPIs } from "@/components/expenses/expense-kpis";
 import type { Expense } from "@/lib/db/schema";
 
 export default function ExpensesPage() {
@@ -72,9 +73,12 @@ export default function ExpensesPage() {
   };
 
   return (
-    <div className="flex min-w-0 flex-col overflow-hidden">
+    <div className="flex min-w-0 flex-col overflow-auto">
       <Header title="Expenses" />
-      <div className="min-w-0 flex-1 overflow-hidden p-4 sm:p-6">
+      <div className="min-w-0 flex-1 space-y-4 p-4 sm:space-y-6 sm:p-6">
+        {!isLoading && (expenses ?? []).length > 0 && (
+          <ExpenseKPIs expenses={expenses ?? []} />
+        )}
         <Card className="overflow-hidden">
           <CardHeader className="flex flex-col gap-4 sm:flex-row sm:items-center sm:justify-between">
             <CardTitle>All Expenses</CardTitle>

@@ -8,6 +8,7 @@ import { Plus } from "lucide-react";
 import { trpc } from "@/lib/trpc/client";
 import { IncomeTable } from "@/components/income/income-table";
 import { IncomeModal } from "@/components/income/income-modal";
+import { IncomeKPIs } from "@/components/income/income-kpis";
 import type { Income } from "@/lib/db/schema";
 
 export default function IncomePage() {
@@ -80,9 +81,12 @@ export default function IncomePage() {
   };
 
   return (
-    <div className="flex min-w-0 flex-col overflow-hidden">
+    <div className="flex min-w-0 flex-col overflow-auto">
       <Header title="Income" />
-      <div className="min-w-0 flex-1 overflow-hidden p-4 sm:p-6">
+      <div className="min-w-0 flex-1 space-y-4 p-4 sm:space-y-6 sm:p-6">
+        {!isLoading && (incomeList ?? []).length > 0 && (
+          <IncomeKPIs incomeList={incomeList ?? []} />
+        )}
         <Card className="overflow-hidden">
           <CardHeader className="flex flex-col gap-4 sm:flex-row sm:items-center sm:justify-between">
             <CardTitle>All Income</CardTitle>

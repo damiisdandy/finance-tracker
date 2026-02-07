@@ -8,6 +8,7 @@ import { Plus } from "lucide-react";
 import { trpc } from "@/lib/trpc/client";
 import { SubscriptionTable } from "@/components/subscriptions/subscription-table";
 import { SubscriptionModal } from "@/components/subscriptions/subscription-modal";
+import { SubscriptionKPIs } from "@/components/subscriptions/subscription-kpis";
 import type { Subscription } from "@/lib/db/schema";
 
 export default function SubscriptionsPage() {
@@ -72,9 +73,12 @@ export default function SubscriptionsPage() {
   };
 
   return (
-    <div className="flex min-w-0 flex-col overflow-hidden">
+    <div className="flex min-w-0 flex-col overflow-auto">
       <Header title="Subscriptions" />
-      <div className="min-w-0 flex-1 overflow-hidden p-4 sm:p-6">
+      <div className="min-w-0 flex-1 space-y-4 p-4 sm:space-y-6 sm:p-6">
+        {!isLoading && (subscriptions ?? []).length > 0 && (
+          <SubscriptionKPIs subscriptions={subscriptions ?? []} />
+        )}
         <Card className="overflow-hidden">
           <CardHeader className="flex flex-col gap-4 sm:flex-row sm:items-center sm:justify-between">
             <CardTitle>All Subscriptions</CardTitle>
