@@ -150,7 +150,7 @@ export function SubscriptionForm({
           name="nextPaymentDate"
           render={({ field }) => (
             <FormItem>
-              <FormLabel>Next Payment Date</FormLabel>
+              <FormLabel>Next Payment Date (optional)</FormLabel>
               <FormControl>
                 <Input type="date" {...field} />
               </FormControl>

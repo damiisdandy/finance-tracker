@@ -197,7 +197,7 @@ export function ExpenseForm({
           name="date"
           render={({ field }) => (
             <FormItem>
-              <FormLabel>Date</FormLabel>
+              <FormLabel>Date (optional)</FormLabel>
               <FormControl>
                 <Input type="date" {...field} />
               </FormControl>

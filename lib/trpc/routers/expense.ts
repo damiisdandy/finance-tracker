@@ -39,11 +39,12 @@ export const expenseRouter = router({
   }),
 
   create: protectedProcedure.input(expenseInput).mutation(async ({ ctx, input }) => {
+    const { date, ...rest } = input;
     const result = await db
       .insert(expenses)
       .values({
-        ...input,
-        date: input.date || null,
+        ...rest,
+        date: date && date.length > 0 ? date : null,
         userId: ctx.session.user.id,
       })
       .returning();
@@ -53,12 +54,12 @@ export const expenseRouter = router({
   update: protectedProcedure
     .input(expenseInput.extend({ id: z.number() }))
     .mutation(async ({ ctx, input }) => {
-      const { id, ...data } = input;
+      const { id, date, ...data } = input;
       const result = await db
         .update(expenses)
         .set({
           ...data,
-          date: data.date || null,
+          date: date && date.length > 0 ? date : null,
           updatedAt: new Date(),
         })
         .where(and(eq(expenses.id, id), eq(expenses.userId, ctx.session.user.id)))
