@@ -1,10 +1,11 @@
 "use client";
 
+import { useEffect, useRef } from "react";
 import { useForm } from "react-hook-form";
 import { zodResolver } from "@hookform/resolvers/zod";
 import { z } from "zod";
 import { Button } from "@/components/ui/button";
-import { Input } from "@/components/ui/input";
+import { NumberInput } from "@/components/ui/number-input";
 import {
   Form,
   FormControl,
@@ -31,17 +32,25 @@ interface CompoundCalculatorFormProps {
     annualRate: number;
     years: number;
   }) => void;
+  initialValues?: {
+    principal?: string;
+    monthlyContribution?: string;
+    annualRate?: string;
+  };
 }
 
 export function CompoundCalculatorForm({
   onCalculate,
+  initialValues,
 }: CompoundCalculatorFormProps) {
+  const hasAutoCalculated = useRef(false);
+
   const form = useForm<FormValues>({
     resolver: zodResolver(formSchema),
     defaultValues: {
-      principal: "100000",
-      monthlyContribution: "10000",
-      annualRate: "10",
+      principal: initialValues?.principal ?? "100000",
+      monthlyContribution: initialValues?.monthlyContribution ?? "10000",
+      annualRate: initialValues?.annualRate ?? "10",
       years: "10",
     },
   });
@@ -55,6 +64,13 @@ export function CompoundCalculatorForm({
     });
   };
 
+  useEffect(() => {
+    if (initialValues && !hasAutoCalculated.current) {
+      hasAutoCalculated.current = true;
+      form.handleSubmit(handleSubmit)();
+    }
+  }, []); // eslint-disable-line react-hooks/exhaustive-deps
+
   return (
     <Form {...form}>
       <form onSubmit={form.handleSubmit(handleSubmit)} className="space-y-4">
@@ -65,7 +81,7 @@ export function CompoundCalculatorForm({
             <FormItem>
               <FormLabel>Initial Principal</FormLabel>
               <FormControl>
-                <Input type="number" step="0.01" placeholder="100000" {...field} />
+                <NumberInput step="0.01" placeholder="100000" {...field} />
               </FormControl>
               <FormDescription>
                 The initial amount you're starting with
@@ -82,7 +98,7 @@ export function CompoundCalculatorForm({
             <FormItem>
               <FormLabel>Monthly Contribution</FormLabel>
               <FormControl>
-                <Input type="number" step="0.01" placeholder="10000" {...field} />
+                <NumberInput step="0.01" placeholder="10000" {...field} />
               </FormControl>
               <FormDescription>
                 Amount you'll add each month
@@ -99,7 +115,7 @@ export function CompoundCalculatorForm({
             <FormItem>
               <FormLabel>Annual Interest Rate (%)</FormLabel>
               <FormControl>
-                <Input type="number" step="0.1" placeholder="10" {...field} />
+                <NumberInput step="0.1" placeholder="10" {...field} />
               </FormControl>
               <FormDescription>
                 Expected annual return rate
@@ -116,7 +132,7 @@ export function CompoundCalculatorForm({
             <FormItem>
               <FormLabel>Investment Period (Years)</FormLabel>
               <FormControl>
-                <Input type="number" step="1" placeholder="10" {...field} />
+                <NumberInput step="1" placeholder="10" {...field} />
               </FormControl>
               <FormDescription>
                 How long you plan to invest

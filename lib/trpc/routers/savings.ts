@@ -6,6 +6,8 @@ import { and, eq } from "drizzle-orm";
 const savingsInput = z.object({
   name: z.string().min(1),
   balance: z.string(),
+  monthlyContribution: z.string().optional(),
+  interestRate: z.string().optional(),
   currency: z.enum(["NGN", "USD"]),
 });
 

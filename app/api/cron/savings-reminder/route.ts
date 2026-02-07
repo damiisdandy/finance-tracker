@@ -1,5 +1,5 @@
 import { NextResponse } from "next/server";
-import { db, savingsAccounts, userSettings, users } from "@/lib/db";
+import { db, savingsAccounts, users } from "@/lib/db";
 import { eq } from "drizzle-orm";
 import { env } from "@/lib/env";
 import { sendEmail } from "@/lib/email/resend";
@@ -25,6 +25,16 @@ function formatTotals(totals: Record<Currency, number>) {
   return parts.length > 0 ? parts.join(" + ") : formatCurrency(0, "NGN");
 }
 
+function getAppUrl(request: Request) {
+  const configuredUrl = env.BETTER_AUTH_URL || env.NEXT_PUBLIC_APP_URL;
+
+  try {
+    return new URL(configuredUrl).origin;
+  } catch {
+    return new URL(request.url).origin;
+  }
+}
+
 export async function GET(request: Request) {
   const authHeader = request.headers.get("authorization");
 
@@ -32,23 +42,21 @@ export async function GET(request: Request) {
     return NextResponse.json({ error: "Unauthorized" }, { status: 401 });
   }
 
-  const settings = await db
+  const recipients = await db
     .select({
-      userId: userSettings.userId,
-      reminderFrequency: userSettings.reminderFrequency,
-      email: userSettings.email,
+      userId: users.id,
       userEmail: users.email,
       userName: users.name,
     })
-    .from(userSettings)
-    .innerJoin(users, eq(users.id, userSettings.userId))
-    .where(eq(userSettings.reminderFrequency, "weekly"));
+    .from(users);
 
   let sent = 0;
 
+  const appUrl = getAppUrl(request);
+
   await Promise.all(
-    settings.map(async (setting) => {
-      const to = setting.email ?? setting.userEmail;
+    recipients.map(async (recipient) => {
+      const to = recipient.userEmail;
       if (!to) {
         return;
       }
@@ -60,7 +68,7 @@ export async function GET(request: Request) {
           currency: savingsAccounts.currency,
         })
         .from(savingsAccounts)
-        .where(eq(savingsAccounts.userId, setting.userId));
+        .where(eq(savingsAccounts.userId, recipient.userId));
 
       if (accounts.length === 0) {
         return;
@@ -76,10 +84,10 @@ export async function GET(request: Request) {
           balance: formatCurrency(parseFloat(account.balance), account.currency),
           currency: account.currency,
         })),
-        appUrl: env.NEXT_PUBLIC_APP_URL,
+        appUrl,
       });
 
-      const subject = `Weekly savings reminder${setting.userName ? ` for ${setting.userName}` : ""}`;
+      const subject = `Monthly financial update reminder${recipient.userName ? ` for ${recipient.userName}` : ""}`;
       const result = await sendEmail({ to, subject, html });
 
       if (result.success) {

@@ -11,6 +11,7 @@ import {
 } from "drizzle-orm/pg-core";
 
 export const frequencyEnum = pgEnum("frequency", [
+  "hourly",
   "daily",
   "weekly",
   "monthly",
@@ -36,13 +37,6 @@ export const expenseCategoryEnum = pgEnum("expense_category", [
   "education",
   "shopping",
   "other",
-]);
-
-export const reminderFrequencyEnum = pgEnum("reminder_frequency", [
-  "daily",
-  "weekly",
-  "monthly",
-  "never",
 ]);
 
 export const users = pgTable("user", {
@@ -132,6 +126,7 @@ export const income = pgTable("income", {
   name: text("name").notNull(),
   amount: decimal("amount", { precision: 12, scale: 2 }).notNull(),
   frequency: frequencyEnum("frequency").notNull(),
+  isWorkHours: boolean("is_work_hours").notNull().default(false),
   currency: currencyEnum("currency").notNull().default("NGN"),
   type: incomeTypeEnum("type").notNull(),
   date: date("date").notNull(),
@@ -146,6 +141,8 @@ export const savingsAccounts = pgTable("savings_accounts", {
     .references(() => users.id, { onDelete: "cascade" }),
   name: text("name").notNull(),
   balance: decimal("balance", { precision: 12, scale: 2 }).notNull(),
+  monthlyContribution: decimal("monthly_contribution", { precision: 12, scale: 2 }).notNull().default("0"),
+  interestRate: decimal("interest_rate", { precision: 5, scale: 2 }).notNull().default("0"),
   currency: currencyEnum("currency").notNull().default("NGN"),
   lastUpdated: timestamp("last_updated").defaultNow().notNull(),
   createdAt: timestamp("created_at").defaultNow().notNull(),
@@ -169,19 +166,6 @@ export const savingsAllocations = pgTable("savings_allocations", {
   updatedAt: timestamp("updated_at").defaultNow().notNull(),
 });
 
-export const userSettings = pgTable("user_settings", {
-  id: serial("id").primaryKey(),
-  userId: text("user_id")
-    .notNull()
-    .references(() => users.id, { onDelete: "cascade" }),
-  email: text("email"),
-  reminderFrequency: reminderFrequencyEnum("reminder_frequency")
-    .notNull()
-    .default("weekly"),
-  createdAt: timestamp("created_at").defaultNow().notNull(),
-  updatedAt: timestamp("updated_at").defaultNow().notNull(),
-});
-
 export type Subscription = typeof subscriptions.$inferSelect;
 export type NewSubscription = typeof subscriptions.$inferInsert;
 
@@ -196,9 +180,6 @@ export type NewSavingsAccount = typeof savingsAccounts.$inferInsert;
 
 export type SavingsAllocation = typeof savingsAllocations.$inferSelect;
 export type NewSavingsAllocation = typeof savingsAllocations.$inferInsert;
-
-export type UserSettings = typeof userSettings.$inferSelect;
-export type NewUserSettings = typeof userSettings.$inferInsert;
 
 export type User = typeof users.$inferSelect;
 export type NewUser = typeof users.$inferInsert;

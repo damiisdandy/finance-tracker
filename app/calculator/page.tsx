@@ -1,6 +1,7 @@
 "use client";
 
 import { useState } from "react";
+import { useSearchParams } from "next/navigation";
 import { Header } from "@/components/layout/header";
 import { Card, CardContent, CardHeader, CardTitle } from "@/components/ui/card";
 import { CompoundCalculatorForm } from "@/components/calculator/compound-calculator-form";
@@ -11,7 +12,16 @@ import {
 } from "@/lib/utils/calculator";
 
 export default function CalculatorPage() {
+  const searchParams = useSearchParams();
   const [result, setResult] = useState<CompoundInterestResult | null>(null);
+
+  const initialValues = {
+    principal: searchParams.get("principal") ?? undefined,
+    monthlyContribution: searchParams.get("monthly") ?? undefined,
+    annualRate: searchParams.get("rate") ?? undefined,
+  };
+
+  const hasInitialValues = initialValues.principal || initialValues.monthlyContribution || initialValues.annualRate;
 
   const handleCalculate = (data: {
     principal: number;
@@ -38,7 +48,10 @@ export default function CalculatorPage() {
               <CardTitle>Calculator</CardTitle>
             </CardHeader>
             <CardContent>
-              <CompoundCalculatorForm onCalculate={handleCalculate} />
+              <CompoundCalculatorForm
+                onCalculate={handleCalculate}
+                initialValues={hasInitialValues ? initialValues : undefined}
+              />
             </CardContent>
           </Card>
 

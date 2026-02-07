@@ -2,6 +2,7 @@
 
 import { Card, CardContent, CardHeader, CardTitle } from "@/components/ui/card";
 import { trpc } from "@/lib/trpc/client";
+import { toMonthlyAmount, type Frequency } from "@/lib/utils/finance";
 import { useCurrency } from "@/providers/currency-provider";
 import { Wallet, Receipt, CreditCard, PiggyBank } from "lucide-react";
 
@@ -16,19 +17,24 @@ export function OverviewCards() {
   const totalIncome =
     incomeData?.reduce((acc, item) => {
       const amount = parseFloat(item.amount);
-      return acc + convert(amount, item.currency);
+      const converted = convert(amount, item.currency);
+      return acc + toMonthlyAmount(converted, item.frequency as Frequency, {
+        isWorkHours: item.isWorkHours,
+      });
     }, 0) ?? 0;
 
   const totalExpenses =
     expenseData?.reduce((acc, item) => {
       const amount = parseFloat(item.amount);
-      return acc + convert(amount, item.currency);
+      const converted = convert(amount, item.currency);
+      return acc + toMonthlyAmount(converted, item.frequency as Frequency);
     }, 0) ?? 0;
 
   const totalSubscriptions =
     subscriptionData?.reduce((acc, item) => {
       const amount = parseFloat(item.amount);
-      return acc + convert(amount, item.currency);
+      const converted = convert(amount, item.currency);
+      return acc + toMonthlyAmount(converted, item.frequency as Frequency);
     }, 0) ?? 0;
 
   const totalSavings =

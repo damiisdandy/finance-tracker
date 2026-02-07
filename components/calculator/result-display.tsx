@@ -86,12 +86,13 @@ export function ResultDisplay({ result }: ResultDisplayProps) {
                 <TableHead className="text-right">Balance</TableHead>
                 <TableHead className="text-right">Contributions</TableHead>
                 <TableHead className="text-right">Interest Earned</TableHead>
+                <TableHead className="text-right">Total Interest</TableHead>
               </TableRow>
             </TableHeader>
             <TableBody>
               {result.yearlyBreakdown.map((year) => (
                 <TableRow key={year.year}>
-                  <TableCell className="font-medium">Year {year.year}</TableCell>
+                  <TableCell className="font-medium">{year.year}</TableCell>
                   <TableCell className="text-right">
                     {format(year.balance, currency)}
                   </TableCell>
@@ -99,6 +100,9 @@ export function ResultDisplay({ result }: ResultDisplayProps) {
                     {format(year.contributions, currency)}
                   </TableCell>
                   <TableCell className="text-right text-blue-500">
+                    {format(year.yearlyInterest, currency)}
+                  </TableCell>
+                  <TableCell className="text-right text-muted-foreground">
                     {format(year.interest, currency)}
                   </TableCell>
                 </TableRow>

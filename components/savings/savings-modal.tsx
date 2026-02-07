@@ -16,6 +16,8 @@ interface SavingsModalProps {
   onSubmit: (data: {
     name: string;
     balance: string;
+    monthlyContribution?: string;
+    interestRate?: string;
     currency: "NGN" | "USD";
   }) => void;
   isSubmitting?: boolean;

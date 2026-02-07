@@ -7,7 +7,6 @@ import {
   income,
   savingsAccounts,
   savingsAllocations,
-  userSettings,
   accounts,
   sessions,
   users,
@@ -31,7 +30,6 @@ async function seed() {
   await db.delete(income);
   await db.delete(savingsAllocations);
   await db.delete(savingsAccounts);
-  await db.delete(userSettings);
   await db.delete(sessions);
   await db.delete(accounts);
   await db.delete(verifications);
@@ -266,15 +264,6 @@ async function seed() {
       currency: "NGN",
       savingsAccountId: emergencyFund?.id ?? null,
       date: "2026-01-20",
-    },
-  ]);
-
-  // Seed user settings
-  await db.insert(userSettings).values([
-    {
-      userId: user.id,
-      email: null,
-      reminderFrequency: "weekly",
     },
   ]);
 

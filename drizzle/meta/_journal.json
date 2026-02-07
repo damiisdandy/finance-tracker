@@ -8,6 +8,27 @@
       "when": 1770354887353,
       "tag": "0000_fast_the_anarchist",
       "breakpoints": true
+    },
+    {
+      "idx": 1,
+      "version": "7",
+      "when": 1770459769544,
+      "tag": "0001_outstanding_mister_sinister",
+      "breakpoints": true
+    },
+    {
+      "idx": 2,
+      "version": "7",
+      "when": 1770461551216,
+      "tag": "0002_certain_sharon_carter",
+      "breakpoints": true
+    },
+    {
+      "idx": 3,
+      "version": "7",
+      "when": 1770462966635,
+      "tag": "0003_charming_tana_nile",
+      "breakpoints": true
     }
   ]
 }

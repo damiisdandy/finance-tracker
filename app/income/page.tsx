@@ -41,7 +41,15 @@ export default function IncomePage() {
   const handleSubmit = (data: {
     name: string;
     amount: string;
-    frequency: "daily" | "weekly" | "monthly" | "quarterly" | "yearly" | "one-time";
+    frequency:
+      | "hourly"
+      | "daily"
+      | "weekly"
+      | "monthly"
+      | "quarterly"
+      | "yearly"
+      | "one-time";
+    isWorkHours: boolean;
     currency: "NGN" | "USD";
     type: "salary" | "interest" | "other";
     date: string;
@@ -78,14 +86,17 @@ export default function IncomePage() {
         <Card className="overflow-hidden">
           <CardHeader className="flex flex-col gap-4 sm:flex-row sm:items-center sm:justify-between">
             <CardTitle>All Income</CardTitle>
-            <Button onClick={() => setModalOpen(true)} className="w-full sm:w-auto">
+            <Button
+              onClick={() => setModalOpen(true)}
+              className="w-full sm:w-auto"
+            >
               <Plus className="mr-2 h-4 w-4" />
               Add Income
             </Button>
           </CardHeader>
           <CardContent>
             {isLoading ? (
-              <div className="flex h-[200px] items-center justify-center">
+              <div className="flex h-50 items-center justify-center">
                 <p className="text-muted-foreground">Loading...</p>
               </div>
             ) : (

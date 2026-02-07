@@ -13,7 +13,7 @@ import type { SavingsAccount } from "@/lib/db/schema";
 export default function SavingsPage() {
   const [modalOpen, setModalOpen] = useState(false);
   const [editingSavings, setEditingSavings] = useState<SavingsAccount | null>(
-    null
+    null,
   );
 
   const utils = trpc.useUtils();
@@ -43,6 +43,8 @@ export default function SavingsPage() {
   const handleSubmit = (data: {
     name: string;
     balance: string;
+    monthlyContribution?: string;
+    interestRate?: string;
     currency: "NGN" | "USD";
   }) => {
     if (editingSavings) {
@@ -77,14 +79,17 @@ export default function SavingsPage() {
         <Card className="overflow-hidden">
           <CardHeader className="flex flex-col gap-4 sm:flex-row sm:items-center sm:justify-between">
             <CardTitle>Savings Accounts</CardTitle>
-            <Button onClick={() => setModalOpen(true)} className="w-full sm:w-auto">
+            <Button
+              onClick={() => setModalOpen(true)}
+              className="w-full sm:w-auto"
+            >
               <Plus className="mr-2 h-4 w-4" />
               Add Account
             </Button>
           </CardHeader>
           <CardContent>
             {isLoading ? (
-              <div className="flex h-[200px] items-center justify-center">
+              <div className="flex h-50 items-center justify-center">
                 <p className="text-muted-foreground">Loading...</p>
               </div>
             ) : (

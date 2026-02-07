@@ -39,9 +39,17 @@ export function SavingsSummary() {
               >
                 <div>
                   <p className="font-medium">{account.name}</p>
-                  <p className="text-xs text-muted-foreground">
-                    Last updated: {formatDate(account.lastUpdated)}
-                  </p>
+                  {(parseFloat(account.monthlyContribution ?? "0") > 0 || parseFloat(account.interestRate ?? "0") > 0) ? (
+                    <p className="text-xs text-muted-foreground">
+                      {parseFloat(account.monthlyContribution ?? "0") > 0 && `+${format(convert(parseFloat(account.monthlyContribution!), account.currency))}/mo`}
+                      {parseFloat(account.monthlyContribution ?? "0") > 0 && parseFloat(account.interestRate ?? "0") > 0 && " · "}
+                      {parseFloat(account.interestRate ?? "0") > 0 && `${account.interestRate}% p.a.`}
+                    </p>
+                  ) : (
+                    <p className="text-xs text-muted-foreground">
+                      Last updated: {formatDate(account.lastUpdated)}
+                    </p>
+                  )}
                 </div>
                 <div className="text-right">
                   <p className="font-semibold">{format(convertedBalance)}</p>

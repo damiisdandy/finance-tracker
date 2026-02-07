@@ -5,6 +5,7 @@ import { zodResolver } from "@hookform/resolvers/zod";
 import { z } from "zod";
 import { Button } from "@/components/ui/button";
 import { Input } from "@/components/ui/input";
+import { NumberInput } from "@/components/ui/number-input";
 import {
   Form,
   FormControl,
@@ -25,6 +26,8 @@ import type { SavingsAccount } from "@/lib/db/schema";
 const formSchema = z.object({
   name: z.string().min(1, "Name is required"),
   balance: z.string().min(1, "Balance is required"),
+  monthlyContribution: z.string().default("0"),
+  interestRate: z.string().default("0"),
   currency: z.enum(["NGN", "USD"]),
 });
 
@@ -48,6 +51,8 @@ export function SavingsForm({
     defaultValues: {
       name: savings?.name ?? "",
       balance: savings?.balance ?? "",
+      monthlyContribution: savings?.monthlyContribution ?? "0",
+      interestRate: savings?.interestRate ?? "0",
       currency: savings?.currency ?? "NGN",
     },
   });
@@ -77,7 +82,7 @@ export function SavingsForm({
               <FormItem>
                 <FormLabel>Balance</FormLabel>
                 <FormControl>
-                  <Input type="number" step="0.01" placeholder="0.00" {...field} />
+                  <NumberInput step="0.01" placeholder="0.00" {...field} />
                 </FormControl>
                 <FormMessage />
               </FormItem>
@@ -101,6 +106,36 @@ export function SavingsForm({
                     <SelectItem value="USD">USD</SelectItem>
                   </SelectContent>
                 </Select>
+                <FormMessage />
+              </FormItem>
+            )}
+          />
+        </div>
+
+        <div className="grid grid-cols-2 gap-4">
+          <FormField
+            control={form.control}
+            name="monthlyContribution"
+            render={({ field }) => (
+              <FormItem>
+                <FormLabel>Monthly Contribution</FormLabel>
+                <FormControl>
+                  <NumberInput step="0.01" placeholder="0.00" {...field} />
+                </FormControl>
+                <FormMessage />
+              </FormItem>
+            )}
+          />
+
+          <FormField
+            control={form.control}
+            name="interestRate"
+            render={({ field }) => (
+              <FormItem>
+                <FormLabel>Annual Interest Rate (%)</FormLabel>
+                <FormControl>
+                  <NumberInput step="0.1" placeholder="0" {...field} />
+                </FormControl>
                 <FormMessage />
               </FormItem>
             )}

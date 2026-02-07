@@ -84,4 +84,4 @@ Open `http://localhost:3000`.
 - Authentication routes live at `/api/auth/*`.
 - All data is scoped by the authenticated user and enforced in tRPC routers.
 - Savings allocations are excluded from expense charts and included as a positive allocation in cash flow.
-- Weekly savings reminders are sent via `GET /api/cron/savings-reminder` with header `Authorization: Bearer $CRON_SECRET`.
+- Monthly savings reminders can be triggered via `GET /api/cron/savings-reminder` with header `Authorization: Bearer $CRON_SECRET`.

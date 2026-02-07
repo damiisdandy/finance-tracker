@@ -1,10 +1,12 @@
 "use client";
 
-import { useForm } from "react-hook-form";
+import { useEffect } from "react";
+import { useForm, useWatch } from "react-hook-form";
 import { zodResolver } from "@hookform/resolvers/zod";
 import { z } from "zod";
 import { Button } from "@/components/ui/button";
 import { Input } from "@/components/ui/input";
+import { NumberInput } from "@/components/ui/number-input";
 import {
   Form,
   FormControl,
@@ -26,7 +28,8 @@ import { formatDateInput } from "@/lib/utils/date";
 const formSchema = z.object({
   name: z.string().min(1, "Name is required"),
   amount: z.string().min(1, "Amount is required"),
-  frequency: z.enum(["daily", "weekly", "monthly", "quarterly", "yearly", "one-time"]),
+  frequency: z.enum(["hourly", "daily", "weekly", "monthly", "quarterly", "yearly", "one-time"]),
+  isWorkHours: z.boolean(),
   currency: z.enum(["NGN", "USD"]),
   type: z.enum(["salary", "interest", "other"]),
   date: z.string().min(1, "Date is required"),
@@ -53,6 +56,7 @@ export function IncomeForm({
       name: income?.name ?? "",
       amount: income?.amount ?? "",
       frequency: income?.frequency ?? "monthly",
+      isWorkHours: income?.isWorkHours ?? false,
       currency: income?.currency ?? "NGN",
       type: income?.type ?? "salary",
       date: income?.date
@@ -60,6 +64,17 @@ export function IncomeForm({
         : formatDateInput(new Date()),
     },
   });
+
+  const frequency = useWatch({
+    control: form.control,
+    name: "frequency",
+  });
+
+  useEffect(() => {
+    if (frequency !== "hourly") {
+      form.setValue("isWorkHours", false);
+    }
+  }, [form, frequency]);
 
   return (
     <Form {...form}>
@@ -86,7 +101,7 @@ export function IncomeForm({
               <FormItem>
                 <FormLabel>Amount</FormLabel>
                 <FormControl>
-                  <Input type="number" step="0.01" placeholder="0.00" {...field} />
+                  <NumberInput step="0.01" placeholder="0.00" {...field} />
                 </FormControl>
                 <FormMessage />
               </FormItem>
@@ -152,6 +167,7 @@ export function IncomeForm({
                   </SelectTrigger>
                 </FormControl>
                 <SelectContent>
+                  <SelectItem value="hourly">Hourly</SelectItem>
                   <SelectItem value="daily">Daily</SelectItem>
                   <SelectItem value="weekly">Weekly</SelectItem>
                   <SelectItem value="monthly">Monthly</SelectItem>
@@ -162,8 +178,38 @@ export function IncomeForm({
               </Select>
               <FormMessage />
             </FormItem>
+            )}
+          />
+
+          {frequency === "hourly" && (
+            <FormField
+              control={form.control}
+              name="isWorkHours"
+              render={({ field }) => (
+                <FormItem>
+                  <FormLabel>Hourly Mode</FormLabel>
+                  <Select
+                    onValueChange={(value) => field.onChange(value === "work-hours")}
+                    defaultValue={field.value ? "work-hours" : "full-day"}
+                  >
+                    <FormControl>
+                      <SelectTrigger>
+                        <SelectValue placeholder="Select hourly mode" />
+                      </SelectTrigger>
+                    </FormControl>
+                    <SelectContent>
+                      <SelectItem value="work-hours">Work hours only (8 hrs/day)</SelectItem>
+                      <SelectItem value="full-day">Full day (24 hrs/day)</SelectItem>
+                    </SelectContent>
+                  </Select>
+                  <p className="text-xs text-muted-foreground">
+                    Work hours uses 8 hours/day and ~22 work days/month for monthly conversion.
+                  </p>
+                  <FormMessage />
+                </FormItem>
+              )}
+            />
           )}
-        />
 
         <FormField
           control={form.control}

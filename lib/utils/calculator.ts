@@ -7,6 +7,7 @@ export interface CompoundInterestResult {
     balance: number;
     contributions: number;
     interest: number;
+    yearlyInterest: number;
   }[];
 }
 
@@ -21,7 +22,9 @@ export function calculateCompoundInterest(
 
   let balance = principal;
   let totalContributions = principal;
+  let previousInterest = 0;
   const yearlyBreakdown: CompoundInterestResult["yearlyBreakdown"] = [];
+  const currentYear = new Date().getFullYear();
 
   for (let month = 1; month <= totalMonths; month++) {
     // Add interest
@@ -34,15 +37,18 @@ export function calculateCompoundInterest(
 
     // Record yearly breakdown
     if (month % 12 === 0) {
-      const year = month / 12;
+      const yearIndex = month / 12;
       const contributionsToDate = principal + monthlyContribution * month;
       const interestToDate = balance - contributionsToDate;
+      const yearlyInterest = interestToDate - previousInterest;
+      previousInterest = interestToDate;
 
       yearlyBreakdown.push({
-        year,
+        year: currentYear + yearIndex,
         balance: Math.round(balance * 100) / 100,
         contributions: Math.round(contributionsToDate * 100) / 100,
         interest: Math.round(interestToDate * 100) / 100,
+        yearlyInterest: Math.round(yearlyInterest * 100) / 100,
       });
     }
   }

@@ -13,6 +13,9 @@ export function generateSavingsReminderHtml({
   accounts,
   appUrl,
 }: SavingsReminderProps): string {
+  const baseUrl = appUrl.endsWith("/") ? appUrl.slice(0, -1) : appUrl;
+  const savingsUrl = new URL("/savings", `${baseUrl}/`).toString();
+
   const accountRows = accounts
     .map(
       (account) => `
@@ -42,11 +45,11 @@ export function generateSavingsReminderHtml({
 
           <div style="background-color: #09090b; border-radius: 8px; padding: 32px; border: 1px solid #27272a;">
             <h2 style="margin: 0 0 16px 0; font-size: 20px; font-weight: 600;">
-              Savings Reminder
+              Monthly Financial Update Reminder
             </h2>
 
             <p style="margin: 0 0 24px 0; color: #a1a1aa; line-height: 1.6;">
-              Here's a summary of your savings accounts. Remember to review and update them regularly!
+              It is time to update your financial information for the month. Start by reviewing and updating your savings accounts.
             </p>
 
             <div style="background-color: #27272a; border-radius: 8px; padding: 24px; margin-bottom: 24px; text-align: center;">
@@ -72,15 +75,15 @@ export function generateSavingsReminderHtml({
               </tbody>
             </table>
 
-            <a href="${appUrl}/savings" style="display: block; text-align: center; background-color: #ffffff; color: #09090b; padding: 12px 24px; border-radius: 6px; text-decoration: none; font-weight: 500;">
-              View All Accounts
+            <a href="${savingsUrl}" style="display: block; text-align: center; background-color: #ffffff; color: #09090b; padding: 12px 24px; border-radius: 6px; text-decoration: none; font-weight: 500;">
+              Update Savings Information
             </a>
           </div>
 
           <p style="text-align: center; margin-top: 32px; color: #a1a1aa; font-size: 14px;">
-            You're receiving this email because you enabled savings reminders.
+            This reminder is sent monthly to help you keep your financial records current.
             <br>
-            <a href="${appUrl}/settings" style="color: #a1a1aa;">Manage your preferences</a>
+            <a href="${savingsUrl}" style="color: #a1a1aa;">Open your savings accounts</a>
           </p>
         </div>
       </body>

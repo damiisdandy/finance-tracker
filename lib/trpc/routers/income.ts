@@ -6,7 +6,8 @@ import { and, eq } from "drizzle-orm";
 const incomeInput = z.object({
   name: z.string().min(1),
   amount: z.string(),
-  frequency: z.enum(["daily", "weekly", "monthly", "quarterly", "yearly", "one-time"]),
+  frequency: z.enum(["hourly", "daily", "weekly", "monthly", "quarterly", "yearly", "one-time"]),
+  isWorkHours: z.boolean().default(false),
   currency: z.enum(["NGN", "USD"]),
   type: z.enum(["salary", "interest", "other"]),
   date: z.string(),

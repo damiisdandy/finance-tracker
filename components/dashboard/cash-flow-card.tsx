@@ -9,7 +9,7 @@ import {
 } from "@/components/ui/tooltip";
 import { trpc } from "@/lib/trpc/client";
 import { useCurrency } from "@/providers/currency-provider";
-import { toMonthlyAmount, type Frequency } from "@/lib/utils/finance";
+import { type Frequency, toMonthlyAmount } from "@/lib/utils/finance";
 import { ArrowDownRight, ArrowUpRight, Info, Minus, Wallet } from "lucide-react";
 import { cn } from "@/lib/utils";
 
@@ -19,14 +19,16 @@ export function CashFlowCard() {
   const { data: incomeData } = trpc.income.list.useQuery();
   const { data: expenseData } = trpc.expense.list.useQuery();
   const { data: subscriptionData } = trpc.subscription.list.useQuery();
-  const { data: savingsAllocationData } = trpc.savingsAllocation.list.useQuery();
+  const { data: savingsData } = trpc.savings.list.useQuery();
 
   // Calculate monthly income
   const monthlyIncome =
     incomeData?.reduce((acc, item) => {
       const amount = parseFloat(item.amount);
       const converted = convert(amount, item.currency);
-      return acc + toMonthlyAmount(converted, item.frequency as Frequency);
+      return acc + toMonthlyAmount(converted, item.frequency as Frequency, {
+        isWorkHours: item.isWorkHours,
+      });
     }, 0) ?? 0;
 
   // Calculate monthly expenses (excluding one-time for recurring view)
@@ -45,12 +47,13 @@ export function CashFlowCard() {
       return acc + toMonthlyAmount(converted, item.frequency as Frequency);
     }, 0) ?? 0;
 
-  // Calculate monthly savings allocations
+  // Calculate monthly savings from account contributions
   const monthlySavings =
-    savingsAllocationData?.reduce((acc, item) => {
-      const amount = parseFloat(item.amount);
-      const converted = convert(amount, item.currency);
-      return acc + toMonthlyAmount(converted, item.frequency as Frequency);
+    savingsData?.reduce((acc, account) => {
+      const contribution = parseFloat(account.monthlyContribution ?? "0");
+      if (contribution <= 0) return acc;
+      const converted = convert(contribution, account.currency);
+      return acc + converted;
     }, 0) ?? 0;
 
   const totalOutflow = monthlyExpenses + monthlySubscriptions + monthlySavings;

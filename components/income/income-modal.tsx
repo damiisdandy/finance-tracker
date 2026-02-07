@@ -16,7 +16,8 @@ interface IncomeModalProps {
   onSubmit: (data: {
     name: string;
     amount: string;
-    frequency: "daily" | "weekly" | "monthly" | "quarterly" | "yearly" | "one-time";
+    frequency: "hourly" | "daily" | "weekly" | "monthly" | "quarterly" | "yearly" | "one-time";
+    isWorkHours: boolean;
     currency: "NGN" | "USD";
     type: "salary" | "interest" | "other";
     date: string;

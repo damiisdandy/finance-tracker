@@ -1,4 +1,5 @@
 export type Frequency =
+  | "hourly"
   | "daily"
   | "weekly"
   | "monthly"
@@ -9,8 +10,14 @@ export type Frequency =
 /**
  * Convert an amount to its monthly equivalent based on frequency
  */
-export function toMonthlyAmount(amount: number, frequency: Frequency): number {
+export function toMonthlyAmount(
+  amount: number,
+  frequency: Frequency,
+  options?: { isWorkHours?: boolean },
+): number {
   switch (frequency) {
+    case "hourly":
+      return options?.isWorkHours ? amount * 8 * 22 : amount * 24 * 30;
     case "daily":
       return amount * 30; // Approximate days per month
     case "weekly":
@@ -31,8 +38,14 @@ export function toMonthlyAmount(amount: number, frequency: Frequency): number {
 /**
  * Convert an amount to its yearly equivalent based on frequency
  */
-export function toYearlyAmount(amount: number, frequency: Frequency): number {
+export function toYearlyAmount(
+  amount: number,
+  frequency: Frequency,
+  options?: { isWorkHours?: boolean },
+): number {
   switch (frequency) {
+    case "hourly":
+      return options?.isWorkHours ? amount * 8 * 260 : amount * 24 * 365;
     case "daily":
       return amount * 365;
     case "weekly":

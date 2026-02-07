@@ -1,0 +1,2 @@
+ALTER TABLE "savings_accounts" ADD COLUMN "monthly_contribution" numeric(12, 2) DEFAULT '0' NOT NULL;--> statement-breakpoint
+ALTER TABLE "savings_accounts" ADD COLUMN "interest_rate" numeric(5, 2) DEFAULT '0' NOT NULL;
