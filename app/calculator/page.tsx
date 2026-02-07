@@ -1,6 +1,6 @@
 "use client";
 
-import { useState } from "react";
+import { Suspense, useState } from "react";
 import { useSearchParams } from "next/navigation";
 import { Header } from "@/components/layout/header";
 import { Card, CardContent, CardHeader, CardTitle } from "@/components/ui/card";
@@ -11,7 +11,7 @@ import {
   type CompoundInterestResult,
 } from "@/lib/utils/calculator";
 
-export default function CalculatorPage() {
+function CalculatorPageContent() {
   const searchParams = useSearchParams();
   const [result, setResult] = useState<CompoundInterestResult | null>(null);
 
@@ -61,5 +61,13 @@ export default function CalculatorPage() {
         </div>
       </div>
     </div>
+  );
+}
+
+export default function CalculatorPage() {
+  return (
+    <Suspense fallback={null}>
+      <CalculatorPageContent />
+    </Suspense>
   );
 }
