@@ -6,14 +6,16 @@ import { sendEmail } from "@/lib/email/resend";
 import { generateSavingsReminderHtml } from "@/lib/email/templates/savings-reminder";
 import { formatCurrency, type Currency } from "@/lib/utils/currency";
 
-function getTotalsByCurrency(accounts: { balance: string; currency: Currency }[]) {
+function getTotalsByCurrency(
+  accounts: { balance: string; currency: Currency }[],
+) {
   return accounts.reduce<Record<Currency, number>>(
     (acc, account) => {
       const balance = parseFloat(account.balance);
       acc[account.currency] += Number.isNaN(balance) ? 0 : balance;
       return acc;
     },
-    { NGN: 0, USD: 0 }
+    { NGN: 0, USD: 0 },
   );
 }
 
@@ -81,7 +83,10 @@ export async function GET(request: Request) {
         totalSavings,
         accounts: accounts.map((account) => ({
           name: account.name,
-          balance: formatCurrency(parseFloat(account.balance), account.currency),
+          balance: formatCurrency(
+            parseFloat(account.balance),
+            account.currency,
+          ),
           currency: account.currency,
         })),
         appUrl,
@@ -93,7 +98,7 @@ export async function GET(request: Request) {
       if (result.success) {
         sent += 1;
       }
-    })
+    }),
   );
 
   return NextResponse.json({ success: true, sent });
