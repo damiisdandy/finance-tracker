@@ -2,6 +2,7 @@ export interface CompoundInterestResult {
   futureValue: number;
   totalContributions: number;
   totalInterest: number;
+  calculatedCurrency: "NGN" | "USD";
   yearlyBreakdown: {
     year: number;
     balance: number;

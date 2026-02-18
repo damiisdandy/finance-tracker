@@ -15,19 +15,24 @@ function CalculatorPageContent() {
   const searchParams = useSearchParams();
   const [result, setResult] = useState<CompoundInterestResult | null>(null);
 
+  const currencyParam = searchParams.get("currency");
+  const initialCurrency = currencyParam === "USD" ? "USD" as const : currencyParam === "NGN" ? "NGN" as const : undefined;
+
   const initialValues = {
     principal: searchParams.get("principal") ?? undefined,
     monthlyContribution: searchParams.get("monthly") ?? undefined,
     annualRate: searchParams.get("rate") ?? undefined,
+    currency: initialCurrency,
   };
 
-  const hasInitialValues = initialValues.principal || initialValues.monthlyContribution || initialValues.annualRate;
+  const hasInitialValues = initialValues.principal || initialValues.monthlyContribution || initialValues.annualRate || initialValues.currency;
 
   const handleCalculate = (data: {
     principal: number;
     monthlyContribution: number;
     annualRate: number;
     years: number;
+    currency: "NGN" | "USD";
   }) => {
     const calculatedResult = calculateCompoundInterest(
       data.principal,
@@ -35,7 +40,7 @@ function CalculatorPageContent() {
       data.annualRate,
       data.years
     );
-    setResult(calculatedResult);
+    setResult({ ...calculatedResult, calculatedCurrency: data.currency });
   };
 
   return (

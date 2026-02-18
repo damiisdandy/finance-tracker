@@ -113,7 +113,7 @@ export function SavingsTable({
                       </DropdownMenuItem>
                       <DropdownMenuItem asChild>
                         <Link
-                          href={`/calculator?principal=${account.balance}&monthly=${account.monthlyContribution ?? "0"}&rate=${account.interestRate ?? "0"}`}
+                          href={`/calculator?principal=${account.balance}&monthly=${account.monthlyContribution ?? "0"}&rate=${account.interestRate ?? "0"}&currency=${account.currency}`}
                         >
                           <Calculator className="mr-2 h-4 w-4" />
                           Forecast

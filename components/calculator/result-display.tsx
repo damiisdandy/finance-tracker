@@ -17,7 +17,12 @@ interface ResultDisplayProps {
 }
 
 export function ResultDisplay({ result }: ResultDisplayProps) {
-  const { format, currency } = useCurrency();
+  const { format, currency, convert } = useCurrency();
+
+  const fmt = (amount: number) => {
+    const converted = result ? convert(amount, result.calculatedCurrency) : amount;
+    return format(converted, currency);
+  };
 
   if (!result) {
     return (
@@ -42,7 +47,7 @@ export function ResultDisplay({ result }: ResultDisplayProps) {
           </CardHeader>
           <CardContent>
             <div className="text-2xl font-bold text-green-500">
-              {format(result.futureValue, currency)}
+              {fmt(result.futureValue)}
             </div>
           </CardContent>
         </Card>
@@ -55,7 +60,7 @@ export function ResultDisplay({ result }: ResultDisplayProps) {
           </CardHeader>
           <CardContent>
             <div className="text-2xl font-bold">
-              {format(result.totalContributions, currency)}
+              {fmt(result.totalContributions)}
             </div>
           </CardContent>
         </Card>
@@ -68,7 +73,7 @@ export function ResultDisplay({ result }: ResultDisplayProps) {
           </CardHeader>
           <CardContent>
             <div className="text-2xl font-bold text-blue-500">
-              {format(result.totalInterest, currency)}
+              {fmt(result.totalInterest)}
             </div>
           </CardContent>
         </Card>
@@ -94,16 +99,16 @@ export function ResultDisplay({ result }: ResultDisplayProps) {
                 <TableRow key={year.year}>
                   <TableCell className="font-medium">{year.year}</TableCell>
                   <TableCell className="text-right">
-                    {format(year.balance, currency)}
+                    {fmt(year.balance)}
                   </TableCell>
                   <TableCell className="text-right">
-                    {format(year.contributions, currency)}
+                    {fmt(year.contributions)}
                   </TableCell>
                   <TableCell className="text-right text-blue-500">
-                    {format(year.yearlyInterest, currency)}
+                    {fmt(year.yearlyInterest)}
                   </TableCell>
                   <TableCell className="text-right text-muted-foreground">
-                    {format(year.interest, currency)}
+                    {fmt(year.interest)}
                   </TableCell>
                 </TableRow>
               ))}

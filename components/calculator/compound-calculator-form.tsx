@@ -15,12 +15,20 @@ import {
   FormMessage,
   FormDescription,
 } from "@/components/ui/form";
+import {
+  Select,
+  SelectContent,
+  SelectItem,
+  SelectTrigger,
+  SelectValue,
+} from "@/components/ui/select";
 
 const formSchema = z.object({
   principal: z.string().min(1, "Principal is required"),
   monthlyContribution: z.string().min(1, "Monthly contribution is required"),
   annualRate: z.string().min(1, "Annual rate is required"),
   years: z.string().min(1, "Number of years is required"),
+  currency: z.enum(["NGN", "USD"]).default("NGN"),
 });
 
 type FormValues = z.infer<typeof formSchema>;
@@ -31,11 +39,13 @@ interface CompoundCalculatorFormProps {
     monthlyContribution: number;
     annualRate: number;
     years: number;
+    currency: "NGN" | "USD";
   }) => void;
   initialValues?: {
     principal?: string;
     monthlyContribution?: string;
     annualRate?: string;
+    currency?: "NGN" | "USD";
   };
 }
 
@@ -52,6 +62,7 @@ export function CompoundCalculatorForm({
       monthlyContribution: initialValues?.monthlyContribution ?? "10000",
       annualRate: initialValues?.annualRate ?? "10",
       years: "10",
+      currency: initialValues?.currency ?? "NGN",
     },
   });
 
@@ -61,6 +72,7 @@ export function CompoundCalculatorForm({
       monthlyContribution: parseFloat(data.monthlyContribution),
       annualRate: parseFloat(data.annualRate),
       years: parseInt(data.years),
+      currency: data.currency,
     });
   };
 
@@ -136,6 +148,31 @@ export function CompoundCalculatorForm({
               </FormControl>
               <FormDescription>
                 How long you plan to invest
+              </FormDescription>
+              <FormMessage />
+            </FormItem>
+          )}
+        />
+
+        <FormField
+          control={form.control}
+          name="currency"
+          render={({ field }) => (
+            <FormItem>
+              <FormLabel>Currency</FormLabel>
+              <Select onValueChange={field.onChange} defaultValue={field.value}>
+                <FormControl>
+                  <SelectTrigger>
+                    <SelectValue placeholder="Select currency" />
+                  </SelectTrigger>
+                </FormControl>
+                <SelectContent>
+                  <SelectItem value="NGN">NGN - Nigerian Naira</SelectItem>
+                  <SelectItem value="USD">USD - US Dollar</SelectItem>
+                </SelectContent>
+              </Select>
+              <FormDescription>
+                Currency of the input values
               </FormDescription>
               <FormMessage />
             </FormItem>
