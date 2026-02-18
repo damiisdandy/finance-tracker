@@ -20,7 +20,7 @@ export function ResultDisplay({ result }: ResultDisplayProps) {
   const { format, currency, convert } = useCurrency();
 
   const fmt = (amount: number) => {
-    const converted = result ? convert(amount, result.calculatedCurrency) : amount;
+    const converted = result?.calculatedCurrency ? convert(amount, result.calculatedCurrency) : amount;
     return format(converted, currency);
   };
 

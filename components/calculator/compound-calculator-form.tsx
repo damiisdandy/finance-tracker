@@ -28,7 +28,7 @@ const formSchema = z.object({
   monthlyContribution: z.string().min(1, "Monthly contribution is required"),
   annualRate: z.string().min(1, "Annual rate is required"),
   years: z.string().min(1, "Number of years is required"),
-  currency: z.enum(["NGN", "USD"]).default("NGN"),
+  currency: z.enum(["NGN", "USD"]),
 });
 
 type FormValues = z.infer<typeof formSchema>;
